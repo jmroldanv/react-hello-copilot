@@ -1,3 +1,27 @@
+/**
+ * PostsList.jsx
+ * 
+ * Lista paginada de posts obtenidos desde JSONPlaceholder API.
+ * 
+ * Características principales:
+ * - Paginación del lado del cliente: Obtiene todos los posts y los pagina localmente
+ * - Estados de carga y error: Manejo completo de estados de la aplicación
+ * - Interfaz responsive: Grid adaptativo con Bootstrap
+ * - Paginación avanzada: Navegación inteligente con puntos suspensivos
+ * - Función de actualización: Botón para recargar datos
+ * 
+ * Estados:
+ * - allPosts: Array con todos los posts de la API
+ * - currentPage: Página actual (inicia en 1)
+ * - loading: Estado de carga
+ * - error: Manejo de errores
+ * 
+ * API: https://jsonplaceholder.typicode.com/posts
+ * Configuración: 10 posts por página
+ * 
+ * @returns {JSX.Element} Lista paginada de posts con navegación
+ */
+
 import React, { useState, useEffect } from 'react'
 
 const PostsList = () => {
@@ -8,15 +32,18 @@ const PostsList = () => {
   
   const postsPerPage = 10
   
-  // Calcular posts para la página actual
+  /* Calcular posts para la página actual */
   const indexOfLastPost = currentPage * postsPerPage
   const indexOfFirstPost = indexOfLastPost - postsPerPage
   const currentPosts = allPosts.slice(indexOfFirstPost, indexOfLastPost)
   
-  // Calcular número total de páginas
+  /* Calcular número total de páginas */
   const totalPages = Math.ceil(allPosts.length / postsPerPage)
 
-  // Función para obtener los posts de la API
+  /**
+   * Función para obtener los posts de la API
+   * Carga todos los posts una sola vez y resetea a la primera página
+   */
   const fetchPosts = async () => {
     try {
       setLoading(true)
@@ -39,34 +66,48 @@ const PostsList = () => {
     }
   }
 
-  // useEffect para cargar los posts al montar el componente
+  /* useEffect para cargar los posts al montar el componente */
   useEffect(() => {
     fetchPosts()
   }, [])
 
-  // Función para recargar los posts
+  /**
+   * Función para recargar los posts
+   * Vuelve a ejecutar fetchPosts para obtener datos frescos
+   */
   const handleRefresh = () => {
     fetchPosts()
   }
 
-  // Funciones de paginación
+  /**
+   * Funciones de paginación para navegación entre páginas
+   */
+  /* Ir a una página específica */
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
 
+  /* Ir a la página anterior */
   const goToPreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
     }
   }
 
+  /* Ir a la página siguiente */
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1)
     }
   }
 
-  // Generar números de página para mostrar
+  /**
+   * Generar números de página para mostrar en la navegación
+   * Implementa lógica inteligente para mostrar máximo 5 páginas centradas
+   * alrededor de la página actual, con ajustes en los extremos
+   * 
+   * @returns {Array<number>} Array de números de página a mostrar
+   */
   const getPageNumbers = () => {
     const pageNumbers = []
     const maxPagesToShow = 5
@@ -86,6 +127,9 @@ const PostsList = () => {
     return pageNumbers
   }
 
+  /* Estados de renderizado condicional */
+
+  /* Estado de carga: Muestra spinner mientras se obtienen los datos */
   if (loading) {
     return (
       <div className="text-center">
@@ -97,6 +141,7 @@ const PostsList = () => {
     )
   }
 
+  /* Estado de error: Muestra mensaje de error con opción de reintento */
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">

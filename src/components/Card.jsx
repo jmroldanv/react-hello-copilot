@@ -1,3 +1,19 @@
+/**
+ * Card.jsx
+ * 
+ * Componente de tarjeta simple para mostrar contenido básico.
+ * 
+ * Características:
+ * - Componente funcional sin estado
+ * - Utiliza clases de Bootstrap para el estilo
+ * - Diseño fijo de 18rem de ancho
+ * - Estructura básica de card con título, texto y botón
+ * 
+ * Propósito: Componente de demostración para mostrar la integración de Bootstrap en React.
+ * 
+ * @returns {JSX.Element} Card component con Bootstrap styling
+ */
+
 import React from 'react'
 
 const Card = () => {

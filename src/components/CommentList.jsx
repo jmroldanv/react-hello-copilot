@@ -1,3 +1,32 @@
+/**
+ * CommentList.jsx
+ * 
+ * Lista paginada de comentarios con paginación del lado del servidor.
+ * 
+ * Características principales:
+ * - Paginación del lado del servidor: Utiliza parámetros _start y _limit de la API
+ * - Optimización de rendimiento: Solo carga los datos necesarios por página
+ * - Diseño de comentarios: Muestra email del autor y cuerpo del comentario
+ * - Avatar generado: Círculo con la primera letra del email
+ * - Navegación eficiente: Recarga de la API en cada cambio de página
+ * 
+ * Estados:
+ * - comments: Array con comentarios de la página actual
+ * - currentPage: Página actual
+ * - loading: Estado de carga
+ * - error: Manejo de errores
+ * 
+ * API: https://jsonplaceholder.typicode.com/comments?_start=${start}&_limit=${limit}
+ * Configuración: 10 comentarios por página, 500 comentarios totales (50 páginas)
+ * 
+ * Diferencias con PostsList:
+ * - Paginación en servidor vs cliente
+ * - Datos mínimos vs datos completos
+ * - Diseño de lista vs grid de tarjetas
+ * 
+ * @returns {JSX.Element} Lista paginada de comentarios con navegación del servidor
+ */
+
 import React, { useState, useEffect } from 'react'
 
 const CommentList = () => {
@@ -7,16 +36,21 @@ const CommentList = () => {
   const [error, setError] = useState(null)
   
   const commentsPerPage = 10
-  const totalComments = 500 // JSONPlaceholder tiene 500 comentarios
+  const totalComments = 500 /* JSONPlaceholder tiene 500 comentarios */
   const totalPages = Math.ceil(totalComments / commentsPerPage)
 
-  // Función para obtener comentarios de la API con paginación
+  /**
+   * Función para obtener comentarios de la API con paginación del servidor
+   * Realiza una nueva llamada HTTP por cada página solicitada
+   * 
+   * @param {number} page - Número de página a cargar (default: 1)
+   */
   const fetchComments = async (page = 1) => {
     try {
       setLoading(true)
       setError(null)
       
-      // Calcular el _start para la paginación
+      /* Calcular el _start para la paginación basado en la página solicitada */
       const start = (page - 1) * commentsPerPage
       
       const response = await fetch(
@@ -37,38 +71,54 @@ const CommentList = () => {
     }
   }
 
-  // useEffect para cargar comentarios cuando cambie la página
+  /* 
+   * useEffect para cargar comentarios cuando cambie la página
+   * IMPORTANTE: Se ejecuta en cada cambio de currentPage (diferente a PostsList)
+   */
   useEffect(() => {
     fetchComments(currentPage)
   }, [currentPage])
 
-  // Función para ir a una página específica
+  /**
+   * Funciones de navegación para cambio de página
+   * Cada cambio activa una nueva llamada a la API
+   */
+  
+  /* Ir a una página específica con validación de límites */
   const goToPage = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
-  // Función para ir a la página anterior
+  /* Ir a la página anterior */
   const goToPreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
     }
   }
 
-  // Función para ir a la página siguiente
+  /* Ir a la página siguiente */
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1)
     }
   }
 
-  // Función para recargar la página actual
+  /**
+   * Función para recargar la página actual
+   * Útil para obtener datos actualizados sin cambiar de página
+   */
   const handleRefresh = () => {
     fetchComments(currentPage)
   }
 
-  // Generar números de página para mostrar (similar a PostsList)
+  /**
+   * Generar números de página para mostrar (similar a PostsList)
+   * Implementa la misma lógica de paginación inteligente
+   * 
+   * @returns {Array<number>} Array de números de página a mostrar
+   */
   const getPageNumbers = () => {
     const pageNumbers = []
     const maxPagesToShow = 5
@@ -88,6 +138,9 @@ const CommentList = () => {
     return pageNumbers
   }
 
+  /* Estados de renderizado condicional */
+  
+  /* Estado de carga: Muestra spinner durante la llamada a la API */
   if (loading) {
     return (
       <div className="text-center">
@@ -99,6 +152,7 @@ const CommentList = () => {
     )
   }
 
+  /* Estado de error: Muestra mensaje de error con opción de reintento */
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
@@ -133,21 +187,23 @@ const CommentList = () => {
           <i className="bi bi-arrow-clockwise me-1"></i>
           Actualizar
         </button>
-      </div>
+        </div>
 
-      {/* Lista de comentarios */}
+      {/* Lista de comentarios con diseño optimizado para contenido textual */}
       <div className="row">
         {comments.map(comment => (
           <div key={comment.id} className="col-12 mb-3">
             <div className="card">
               <div className="card-body">
                 <div className="d-flex align-items-start">
+                  {/* Avatar generado con la primera letra del email */}
                   <div className="flex-shrink-0">
                     <div className="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" 
                          style={{width: '40px', height: '40px', fontSize: '14px'}}>
                       {comment.email.charAt(0).toUpperCase()}
                     </div>
                   </div>
+                  {/* Contenido del comentario: email y body */}
                   <div className="flex-grow-1 ms-3">
                     <h6 className="card-title mb-1">
                       <strong>{comment.email}</strong>
@@ -166,7 +222,7 @@ const CommentList = () => {
         ))}
       </div>
 
-      {/* Componente de Paginación */}
+      {/* Componente de Paginación del lado del servidor */}
       {totalPages > 1 && (
         <nav aria-label="Paginación de comentarios" className="mt-4">
           <ul className="pagination justify-content-center">
