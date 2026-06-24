@@ -6,11 +6,6 @@ All notable changes to this project will be documented in this file.
 
 - version pending release notes.
 
-### Added
-
-- Initial example changelog file.
-- Basic release notes structure for future updates.
-
 ### Changed
 
 - No changes yet.
