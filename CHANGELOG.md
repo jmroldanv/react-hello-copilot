@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-version pending release notes.
+- version pending release notes.
 
 ### Added
 
