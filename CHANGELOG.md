@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-version pending release notes.
-
 ### Added
 
+- Version pending release notes.
 - Initial example changelog file.
 - Basic release notes structure for future updates.
 
